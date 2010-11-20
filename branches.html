@@ -1,0 +1,129 @@
+<html>
+<head>
+	<title>Self Check Machine Statistics</title>
+<style type="text/css">
+<!--
+
+.headings {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	font-weight: bold;
+	color: #B14A4A;
+	text-align: center;
+}
+
+.details {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	font-weight: bold;
+	color: #B14A4A;
+	text-align: center;
+}
+
+.detailsleft {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	font-weight: bold;
+	color: #B14A4A;
+	text-align: left;
+}
+
+#Headers {
+	width:100%;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 18px;
+	font-weight: bold;
+	color: #B14A4A;
+	font-variant: small-caps;
+	text-align: center;
+	vertical-align: middle;
+	padding:5px;
+	border-style:solid;
+	border-width:2px;
+	border-color:#3300FF;
+}
+
+#Form {
+	width:100%;
+	padding: 5px;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #3300FF;
+	text-align: center;
+}
+
+#Data {
+	width:100%;
+	padding: 5px;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #3300FF;
+	text-align: center;
+}
+
+#Graph {
+	width:100%;
+	padding: 5px;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #3300FF;
+	text-align: center;
+}
+
+a:link { color: blue; text-decoration: none; }
+a:visited { color: blue; text-decoration: none; } 
+a:hover { color: green; text-docration: none; } 
+
+-->
+</style>
+</head>
+<body>
+<div id="Headers">Branch Statistics --- <a href="/selfcheck/index/">Return to System Statistics</a> --- <a href="http://www.mcmls.org">Home</a> --- <a href="http://www.mcmls.org/statistics">Main Statistics Page</a><br><br></div>
+
+	
+<div id="Form">
+  <table width="850" border="0">
+    <tr>
+      <td height="30" class="headings">Simply choose the date range and branch and click 'Generate' 
+		<form method="post" action="">
+		{% csrf_token %}
+		Date Range: &nbsp&nbsp{{form.smonth}}&nbsp&nbsp {{form.syear}}&nbsp&nbsp through&nbsp&nbsp {{form.emonth}}&nbsp&nbsp {{form.eyear}}&nbsp&nbspBranch:&nbsp&nbsp{{form.branch}}<br><br>
+		<input type="submit" value="Generate" />
+		</form>
+		    {% if errors %}
+				<ul>
+				{% for error in errors %}
+				<ul><li>{{ error }}</li></ul>
+				{% endfor %}
+				</ul>
+			{% endif %}	
+		</td>
+    </tr>
+  </table>
+</div>
+
+<div id = "Data">
+	<p class="headings">Individual branch statistics for {{branch}}</p>
+    {% if monthly_data %}
+        <ul><table><tr>
+            {% for date, stats in monthly_data.items %}
+			{% if stats %}
+			<td width=170><li><b>{{date}}:</b></li>
+				<ul>
+				{% for name, data in stats.items %}
+					<li class="details">{{name}}:  &nbsp{{data}}</li>
+				{% endfor %}
+				</ul></td><td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+			{% endif %}
+			{% if forloop.counter|divisibleby:"4" %} 
+				</tr></table><table><tr>
+			{% endif %}
+            {% endfor %}
+        </ul></tr></table>
+	{% endif %}
+</div>
+{% if graph %}
+	<div id="Graph">
+		<iframe src = {{graph}} width=450 height=350 class="Form"></iframe>
+	</div>
+{% endif %}
